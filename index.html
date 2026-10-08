@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bangwork DEX</title><script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body{margin:0;background:#071017;color:#f5f7fa;font-family:Arial,sans-serif}.wrap{max-width:520px;margin:auto;padding:20px 16px}
+.brand{text-align:center}.brand img{width:96px;height:96px;border-radius:50%;border:2px solid #20f39a}.brand h1{margin:10px 0 3px}.sub{color:#8ea3ad;font-size:12px}
+.chains{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:18px 0}.chain,.tab,.secondary{background:#0d1a23;color:#fff;border:1px solid #17313d;border-radius:12px;padding:11px 5px}.active{border-color:#20f39a!important}
+.card{background:#0d1a23;border:1px solid #17313d;border-radius:17px;padding:15px;margin:10px 0}.row{display:flex;justify-content:space-between;align-items:center}.label{color:#8ea3ad;font-size:12px}.token{font-size:20px;font-weight:bold}.amount{width:70%;background:none;border:0;outline:0;color:white;font-size:25px;text-align:right}.balance{color:#8ea3ad;font-size:11px;margin-top:7px}.swap{text-align:center;margin:-1px}.swap button{border:1px solid #17313d;background:#10232c;color:#20f39a;border-radius:50%;width:40px;height:40px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.primary{background:linear-gradient(90deg,#20f39a,#19d8ff);border:0;border-radius:12px;padding:14px;font-weight:bold}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}.tab{font-size:11px}.notice{color:#8ea3ad;font-size:11px;text-align:center;line-height:1.5;margin-top:18px}
+</style></head>
+<body><div class="wrap">
+<div class="brand"><img src="logo.png"><h1>BANGWORK <span style="color:#20f39a">DEX</span></h1><div class="sub">MULTI-CHAIN TRADING TERMINAL</div></div>
+<div class="chains">
+<button class="chain active" onclick="chain(this)">SOLANA</button><button class="chain" onclick="chain(this)">ETHEREUM</button>
+<button class="chain" onclick="chain(this)">BASE</button><button class="chain" onclick="chain(this)">BNB CHAIN</button></div>
+<div class="card"><div class="row"><span class="label">YOU PAY</span><span class="label">Balance: 0.00</span></div>
+<div class="row"><span class="token">SOL</span><input id="pay" class="amount" placeholder="0.00" inputmode="decimal"></div><div class="balance">Wallet not connected</div></div>
+<div class="swap"><button onclick="swap()">↕</button></div>
+<div class="card"><div class="row"><span class="label">YOU RECEIVE</span><span class="label">Quote</span></div>
+<div class="row"><span id="rt" class="token">USDC</span><input class="amount" placeholder="0.00" readonly></div><div class="balance">Price impact and route will appear here</div></div>
+<div class="actions"><button class="primary" onclick="connect()">Connect Wallet</button><button class="secondary" onclick="alert('Trade preview will be connected next.')">Preview Trade</button></div>
+<div class="tabs"><button class="tab">💰 Buy</button><button class="tab">↔ Sell</button><button class="tab">📊 Chart</button><button class="tab">📋 Orders</button></div>
+<div class="notice">Non-custodial interface. This starter does not execute real trades or request private keys.</div>
+</div>
+<script>
+const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();}
+function chain(e){document.querySelectorAll('.chain').forEach(x=>x.classList.remove('active'));e.classList.add('active')}
+function swap(){let x=document.getElementById('rt');x.textContent=x.textContent==='USDC'?'SOL':'USDC'}
+function connect(){alert('Wallet connection will be added after hosting.')}
+</script></body></html>
