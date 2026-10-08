@@ -1,1149 +1,459 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-
-<title>Bangwork DEX</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d18">
+<title>BANGWORK DEX | Trading Terminal</title>
 
 <style>
-*{box-sizing:border-box}
-
-body{
+:root {
+  --bg:#080d18;
+  --panel:#111a2b;
+  --border:#26344b;
+  --text:#eef4ff;
+  --muted:#91a1bc;
+  --green:#16d9a0;
+  --red:#ff5470;
+  --blue:#648cff;
+}
+* { box-sizing:border-box; }
+body {
   margin:0;
-  background:#071017;
-  color:#f5f7fa;
+  background:var(--bg);
+  color:var(--text);
   font-family:Arial,sans-serif;
 }
-
-.wrap{
-  max-width:560px;
-  margin:auto;
-  padding:16px 12px 35px;
-}
-
-.brand{
-  text-align:center;
-  margin-bottom:15px;
-}
-
-.brand img{
-  width:76px;
-  height:76px;
-  border-radius:50%;
-  border:2px solid #20f39a;
-  object-fit:cover;
-}
-
-.brand h1{
-  margin:8px 0 3px;
-  font-size:25px;
-}
-
-.green{color:#20f39a}
-
-.sub{
-  color:#8ea3ad;
-  font-size:11px;
-}
-
-/* WALLET */
-
-.walletBar{
-  display:flex;
-  gap:7px;
-  margin-bottom:12px;
-}
-
-.walletBtn{
-  flex:1;
-  background:linear-gradient(90deg,#20f39a,#19d8ff);
-  color:#061014;
-  border:0;
-  border-radius:12px;
-  padding:13px 8px;
-  font-weight:bold;
-}
-
-.walletInfo{
-  flex:1;
-  background:#0d1a23;
-  border:1px solid #17313d;
-  border-radius:12px;
-  padding:8px;
-  text-align:center;
-  font-size:11px;
-  color:#8ea3ad;
-}
-
-/* STATUS */
-
-.status{
-  background:#0d1a23;
-  border:1px solid #17313d;
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:12px;
-}
-
-.statusTop{
-  display:flex;
-  justify-content:space-between;
-}
-
-.dot{
-  display:inline-block;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#777;
-  margin-right:5px;
-}
-
-.dot.on{
-  background:#20f39a;
-}
-
-/* CHAINS */
-
-.chains{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:6px;
-  margin:12px 0;
-}
-
-.chain,.tab,.secondary{
-  background:#0d1a23;
-  color:#fff;
-  border:1px solid #17313d;
-  border-radius:11px;
-  padding:11px 4px;
-}
-
-.chain.active{
-  border-color:#20f39a!important;
-  color:#20f39a;
-}
-
-/* CARDS */
-
-.card{
-  background:#0d1a23;
-  border:1px solid #17313d;
-  border-radius:16px;
-  padding:14px;
-  margin:9px 0;
-}
-
-.row{
+header {
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:16px;
+  border-bottom:1px solid var(--border);
+  gap:12px;
+  flex-wrap:wrap;
 }
-
-.label{
-  color:#8ea3ad;
-  font-size:11px;
-}
-
-.token{
-  font-size:20px;
-  font-weight:bold;
-}
-
-.amount{
-  width:68%;
-  background:none;
-  border:0;
-  outline:0;
-  color:white;
-  font-size:24px;
-  text-align:right;
-}
-
-.balance{
-  color:#8ea3ad;
-  font-size:10px;
-  margin-top:7px;
-}
-
-/* SWAP */
-
-.swap{
-  text-align:center;
-  margin:-2px;
-}
-
-.swap button{
-  border:1px solid #17313d;
-  background:#10232c;
-  color:#20f39a;
-  border-radius:50%;
-  width:40px;
-  height:40px;
-  font-size:18px;
-}
-
-/* TRADE BUTTONS */
-
-.tradeTitle{
-  margin-top:15px;
-  margin-bottom:7px;
-  color:#8ea3ad;
-  font-size:11px;
-}
-
-.buyGrid,
-.sellGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-}
-
-.buy{
-  background:#299b36;
-  color:white;
-  border:0;
-  border-radius:11px;
-  padding:14px 5px;
-  font-weight:bold;
-}
-
-.sell{
-  background:#b64249;
-  color:white;
-  border:0;
-  border-radius:11px;
-  padding:14px 5px;
-  font-weight:bold;
-}
-
-.buy:active,.sell:active{
-  transform:scale(.97);
-}
-
-/* EXTRA BUTTONS */
-
-.bigGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-  margin-top:9px;
-}
-
-.extra{
-  background:#172638;
-  color:white;
-  border:1px solid #203449;
-  border-radius:11px;
-  padding:13px 4px;
-  font-weight:bold;
-}
-
-/* TABS */
-
-.tabs{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-  margin-top:10px;
-}
-
-.tab{
-  font-size:11px;
-}
-
-/* MODAL */
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  z-index:50;
-  align-items:flex-end;
-  justify-content:center;
-}
-
-.modalBox{
-  width:100%;
-  max-width:560px;
-  background:#0d1a23;
-  border:1px solid #17313d;
-  border-radius:20px 20px 0 0;
-  padding:20px;
-}
-
-.modalBox h2{
-  margin-top:0;
-}
-
-.walletOption{
-  width:100%;
-  background:#162633;
-  color:white;
-  border:1px solid #244050;
-  border-radius:13px;
-  padding:15px;
-  margin:6px 0;
-  text-align:left;
-  font-size:15px;
-}
-
-.close{
-  background:#b64249;
-  color:white;
-  border:0;
-  border-radius:11px;
+.logo {font-weight:900;font-size:21px;}
+.logo span {color:var(--green);}
+button,select,input {
   padding:12px;
-  width:100%;
-  margin-top:8px;
+  border-radius:9px;
+  border:1px solid var(--border);
+  background:#0b1322;
+  color:var(--text);
+  font-size:14px;
 }
-
-/* NOTICE */
-
-.notice{
-  color:#71848d;
-  font-size:10px;
-  text-align:center;
-  line-height:1.5;
-  margin-top:17px;
+button {cursor:pointer;font-weight:bold;}
+.connect {background:var(--green);color:#04120e;border:0;}
+main {max-width:1200px;margin:auto;padding:16px;}
+.notice {
+  background:#17233a;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:13px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+.grid {
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  min-width:0;
+}
+h2 {font-size:17px;margin-top:0;}
+label {display:block;color:var(--muted);font-size:12px;margin:14px 0 6px;}
+input,select {width:100%;}
+.row {display:flex;gap:8px;}
+.row>* {min-width:0;flex:1;}
+.green {color:var(--green);}
+.red {color:var(--red);}
+.muted {color:var(--muted);}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:15px 0;
+}
+.stat {
+  background:#0b1322;
+  padding:12px;
+  border-radius:9px;
+  overflow-wrap:anywhere;
+}
+.stat small {color:var(--muted);}
+.stat strong {display:block;margin-top:7px;font-size:14px;}
+.trade-buttons {display:flex;gap:8px;margin-top:15px;}
+.trade-buttons button {flex:1;}
+.buy {background:#0c503f;color:#b8ffe9;border:1px solid #168b6b;}
+.sell {background:#541d31;color:#ffd3de;border:1px solid #a23c5c;}
+#chart {width:100%;height:420px;border:0;border-radius:10px;}
+.status {font-size:13px;line-height:1.6;overflow-wrap:anywhere;}
+footer {text-align:center;color:var(--muted);padding:25px;font-size:12px;}
+@media(max-width:750px) {
+  .grid {grid-template-columns:1fr;}
+  #chart {height:360px;}
+  header {align-items:flex-start;}
 }
 </style>
 </head>
 
 <body>
+<header>
+  <div class="logo">BANGWORK <span>DEX</span></div>
+  <div class="row" style="flex:0 1 420px;">
+    <select id="chain">
+      <option value="solana">Solana</option>
+      <option value="ethereum">Ethereum — coming soon</option>
+      <option value="base">Base — coming soon</option>
+      <option value="bsc">BNB Chain — coming soon</option>
+    </select>
+    <button class="connect" id="connectBtn">Connect Wallet</button>
+  </div>
+</header>
 
-<div class="wrap">
-
-<!-- BRAND -->
-
-<div class="brand">
-  <img src="logo.png" onerror="this.style.display='none'">
-  <h1>BANGWORK <span class="green">DEX</span></h1>
-  <div class="sub">SOLANA ON-CHAIN TRADING TERMINAL</div>
-</div>
-
-
-<!-- WALLET -->
-
-<div class="walletBar">
-
-  <button class="walletBtn" onclick="openWalletModal()">
-    👛 Connect Wallet
-  </button>
-
-  <div class="walletInfo" id="walletInfo">
-    Wallet not connected
+<main>
+  <div class="notice">
+    <strong>BANGWORK DEX Trading Terminal</strong><br>
+    Connect your wallet, search Solana tokens and inspect market information.
+    Always verify token addresses before trading. Never share your recovery phrase.
   </div>
 
-</div>
+  <div class="grid">
+    <section class="card">
+      <h2>🔎 Token Search</h2>
+      <label for="tokenAddress">Solana Token Mint Address (CA)</label>
+      <input id="tokenAddress" placeholder="Paste token mint address">
 
+      <div class="row" style="margin-top:10px;">
+        <button id="searchBtn">Search Token</button>
+        <button id="clearBtn">Clear</button>
+      </div>
 
-<!-- STATUS -->
+      <div class="stats">
+        <div class="stat"><small>Token</small><strong id="tokenName">—</strong></div>
+        <div class="stat"><small>Price (USD)</small><strong id="tokenPrice">—</strong></div>
+        <div class="stat"><small>Liquidity</small><strong id="liquidity">—</strong></div>
+      </div>
 
-<div class="status">
+      <p id="tokenStatus" class="status muted">Enter a token address to begin.</p>
 
-  <div class="statusTop">
+      <h2 style="margin-top:25px;">📈 Market Chart</h2>
+      <div id="chart"></div>
+    </section>
 
-    <div>
-      <span id="statusDot" class="dot"></span>
-      <span id="statusText">Wallet disconnected</span>
-    </div>
+    <section class="card">
+      <h2>👛 Wallet</h2>
+      <p class="muted">Solana network</p>
+      <p id="walletAddress" class="status">Not connected</p>
 
-    <div id="networkText">
-      SOLANA
-    </div>
+      <div class="stats">
+        <div class="stat"><small>SOL Balance</small><strong id="solBalance">—</strong></div>
+        <div class="stat"><small>Network</small><strong>Solana</strong></div>
+        <div class="stat"><small>Connection</small><strong id="walletStatus">Offline</strong></div>
+      </div>
 
+      <h2 style="margin-top:25px;">⚡ Trade Settings</h2>
+
+      <label for="tradeAmount">Amount (SOL)</label>
+      <input id="tradeAmount" type="number" min="0" step="0.01" placeholder="0.1">
+
+      <label for="slippage">Slippage tolerance</label>
+      <select id="slippage">
+        <option value="0.5">0.5%</option>
+        <option value="1" selected>1%</option>
+        <option value="3">3%</option>
+        <option value="5">5%</option>
+      </select>
+
+      <label for="priorityFee">Priority fee (SOL)</label>
+      <input id="priorityFee" type="number" min="0" step="0.0001" value="0.0001">
+
+      <div class="trade-buttons">
+        <button class="buy" id="buyBtn">BUY</button>
+        <button class="sell" id="sellBtn">SELL</button>
+      </div>
+
+      <p id="tradeStatus" class="status muted">
+        Trading is not enabled yet. No transaction will be submitted.
+      </p>
+
+      <button id="refreshBalance" style="width:100%;margin-top:10px;">
+        Refresh SOL Balance
+      </button>
+    </section>
+
+    <section class="card">
+      <h2>📜 Transaction History</h2>
+      <p class="muted">Connect your wallet to inspect its recent on-chain activity.</p>
+      <button id="historyBtn">View Wallet Activity</button>
+      <div id="historyStatus" class="status muted"></div>
+    </section>
+
+    <section class="card">
+      <h2>🔔 Price Alerts</h2>
+      <label for="alertPrice">Target price (USD)</label>
+      <input id="alertPrice" type="number" min="0" step="any" placeholder="Target price">
+      <button id="alertBtn" style="width:100%;margin-top:10px;">Set Alert</button>
+      <p id="alertStatus" class="status muted">
+        Keep this page open for the basic browser alert.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>🎯 Risk Management</h2>
+      <label for="takeProfit">Take-profit price (USD)</label>
+      <input id="takeProfit" type="number" min="0" step="any" placeholder="Target exit price">
+
+      <label for="stopLoss">Stop-loss price (USD)</label>
+      <input id="stopLoss" type="number" min="0" step="any" placeholder="Risk limit">
+
+      <button id="riskBtn" style="width:100%;margin-top:10px;">
+        Save Local Settings
+      </button>
+
+      <p id="riskStatus" class="status muted">
+        These settings are saved locally only. They do not automatically execute orders.
+      </p>
+    </section>
   </div>
+</main>
 
-</div>
+<footer>
+  BANGWORK DEX · Solana terminal prototype · Verify every transaction before approval.
+</footer>
 
-
-<!-- CHAINS -->
-
-<div class="chains">
-
-<button class="chain active" onclick="selectChain(this,'SOLANA')">
-☀️ SOLANA
-</button>
-
-<button class="chain" onclick="selectChain(this,'ETHEREUM')">
-Ξ ETH
-</button>
-
-<button class="chain" onclick="selectChain(this,'BASE')">
-🔵 BASE
-</button>
-
-<button class="chain" onclick="selectChain(this,'BNB')">
-🟡 BNB
-</button>
-
-</div>
-
-
-<!-- PAY -->
-
-<div class="card">
-
-<div class="row">
-<span class="label">YOU PAY</span>
-<span class="label" id="balanceTop">Balance: 0 SOL</span>
-</div>
-
-<div class="row">
-
-<span class="token">SOL</span>
-
-<input
-id="pay"
-class="amount"
-placeholder="0.00"
-inputmode="decimal"
->
-
-</div>
-
-<div class="balance" id="walletAddress">
-Wallet not connected
-</div>
-
-</div>
-
-
-<!-- SWAP -->
-
-<div class="swap">
-<button onclick="swapTokens()">↕</button>
-</div>
-
-
-<!-- RECEIVE -->
-
-<div class="card">
-
-<div class="row">
-<span class="label">YOU RECEIVE</span>
-<span class="label">Quote</span>
-</div>
-
-<div class="row">
-
-<span id="receiveToken" class="token">USDC</span>
-
-<input
-id="receiveAmount"
-class="amount"
-placeholder="0.00"
-readonly
->
-
-</div>
-
-<div class="balance">
-Price impact and route will appear here
-</div>
-
-</div>
-
-
-<!-- BUY -->
-
-<div class="tradeTitle">
-🟢 QUICK BUY
-</div>
-
-<div class="buyGrid">
-
-<button class="buy" onclick="quickBuy(1)">
-☀️ 1 SOL
-</button>
-
-<button class="buy" onclick="quickBuy(3)">
-☀️ 3 SOL
-</button>
-
-<button class="buy" onclick="customBuy()">
-☀️ X SOL
-</button>
-
-</div>
-
-
-<!-- SELL -->
-
-<div class="tradeTitle">
-🔴 QUICK SELL
-</div>
-
-<div class="sellGrid">
-
-<button class="sell" onclick="sellPercent(50)">
-50%
-</button>
-
-<button class="sell" onclick="sellPercent(100)">
-100%
-</button>
-
-<button class="sell" onclick="customSell()">
-X%
-</button>
-
-</div>
-
-
-<!-- TOOLS -->
-
-<div class="bigGrid">
-
-<button class="extra" onclick="showChart()">
-📈 Chart
-</button>
-
-<button class="extra" onclick="showAlerts()">
-🔔 Alerts
-</button>
-
-<button class="extra" onclick="showOrders()">
-⏱️ Orders
-</button>
-
-<button class="extra" onclick="showMove()">
-🔄 Move
-</button>
-
-<button class="extra" onclick="showPro()">
-🔴 Pro
-</button>
-
-<button class="extra" onclick="showCurrency()">
-💱 Currency
-</button>
-
-<button class="extra" onclick="showPositions()">
-📋 Positions
-</button>
-
-<button class="extra" onclick="showHistory()">
-🧾 History
-</button>
-
-<button class="extra" onclick="disconnectWallet()">
-🔌 Disconnect
-</button>
-
-</div>
-
-
-<!-- PREVIEW -->
-
-<div class="card">
-
-<div class="row">
-<span class="label">TRADING STATUS</span>
-<span class="label">SAFE MODE</span>
-</div>
-
-<p id="actionText" style="margin-bottom:0;color:#8ea3ad;font-size:12px">
-Connect your wallet to begin.
-</p>
-
-</div>
-
-
-<!-- TABS -->
-
-<div class="tabs">
-
-<button class="tab" onclick="showBuy()">💰 Buy</button>
-
-<button class="tab" onclick="showSell()">↔ Sell</button>
-
-<button class="tab" onclick="showChart()">📊 Chart</button>
-
-<button class="tab" onclick="showOrders()">📋 Orders</button>
-
-<button class="tab" onclick="showSettings()">⚙️ Settings</button>
-
-<button class="tab" onclick="openWalletModal()">👛 Wallet</button>
-
-</div>
-
-
-<div class="notice">
-
-Non-custodial interface.<br>
-Bangwork DEX never asks for your seed phrase or private key.<br>
-Buy/Sell buttons are currently preview-only and do not execute real trades.
-
-</div>
-
-</div>
-
-
-<!-- WALLET MODAL -->
-
-<div class="modal" id="walletModal">
-
-<div class="modalBox">
-
-<h2>👛 Connect Wallet</h2>
-
-<p style="color:#8ea3ad;font-size:12px">
-Choose your Solana wallet.
-</p>
-
-<button class="walletOption" onclick="connectPhantom()">
-👻 Phantom
-</button>
-
-<button class="walletOption" onclick="connectSolflare()">
-🔵 Solflare
-</button>
-
-<button class="walletOption" onclick="openTrustWallet()">
-🟡 Trust Wallet
-</button>
-
-<button class="walletOption" onclick="openMetaMask()">
-🦊 MetaMask
-</button>
-
-<button class="close" onclick="closeWalletModal()">
-Close
-</button>
-
-</div>
-
-</div>
-
+<script src="https://unpkg.com/@solana/web3.js@1.98.2/lib/index.iife.min.js"></script>
+<script src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
+const $ = id => document.getElementById(id);
+let provider = null;
+let publicKey = null;
+let currentPrice = null;
+let alertTriggered = false;
 
-const tg =
-window.Telegram &&
-window.Telegram.WebApp;
-
-if(tg){
-  tg.ready();
-  tg.expand();
+function setText(id, text) {
+  $(id).textContent = text;
 }
 
-
-let walletProvider = null;
-let walletAddressValue = null;
-let walletName = null;
-let currentChain = "SOLANA";
-
-
-/* =========================
-   WALLET MODAL
-========================= */
-
-function openWalletModal(){
-
-  document.getElementById("walletModal").style.display="flex";
-
+function shortAddress(address) {
+  return address.slice(0, 6) + "..." + address.slice(-5);
 }
 
-function closeWalletModal(){
-
-  document.getElementById("walletModal").style.display="none";
-
-}
-
-
-/* =========================
-   PHANTOM
-========================= */
-
-async function connectPhantom(){
-
-  try{
-
-    let provider = null;
-
-    if(window.phantom && window.phantom.solana){
-
-      provider = window.phantom.solana;
-
-    }else if(window.solana && window.solana.isPhantom){
-
-      provider = window.solana;
-
-    }
-
-    if(!provider){
-
-      const url =
-      "https://phantom.app/ul/browse/" +
-      encodeURIComponent(window.location.href) +
-      "?ref=" +
-      encodeURIComponent(window.location.href);
-
-      window.location.href=url;
-
+async function connectWallet() {
+  try {
+    if (!window.solana || !window.solana.isPhantom) {
+      setText("walletStatus", "Phantom not found");
+      alert("Install Phantom from its official website, then reopen this page.");
       return;
     }
 
+    provider = window.solana;
     const response = await provider.connect();
+    publicKey = response.publicKey.toString();
 
-    walletProvider=provider;
+    setText("walletAddress", shortAddress(publicKey));
+    setText("walletStatus", "Connected");
+    setText("connectBtn", "Wallet Connected");
 
-    walletName="Phantom";
+    await refreshBalance();
+  } catch (error) {
+    setText("walletStatus", "Connection cancelled or failed");
+  }
+}
 
-    walletAddressValue=
-      response.publicKey.toString();
-
-    walletConnected();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert("Phantom wallet connection failed.");
-
+async function refreshBalance() {
+  if (!publicKey || !window.solanaWeb3) {
+    setText("solBalance", "Connect wallet first");
+    return;
   }
 
+  try {
+    const connection = new solanaWeb3.Connection(
+      "https://api.mainnet-beta.solana.com",
+      "confirmed"
+    );
+
+    const balance = await connection.getBalance(
+      new solanaWeb3.PublicKey(publicKey)
+    );
+
+    setText("solBalance", (balance / 1e9).toFixed(4) + " SOL");
+  } catch (error) {
+    setText("solBalance", "Could not load");
+  }
 }
 
+async function searchToken() {
+  const address = $("tokenAddress").value.trim();
 
-/* =========================
-   SOLFLARE
-========================= */
-
-async function connectSolflare(){
-
-  try{
-
-    if(!window.solflare){
-
-      window.location.href=
-        "https://solflare.com/ul/v1/browse/" +
-        encodeURIComponent(window.location.href);
-
-      return;
-    }
-
-    await window.solflare.connect();
-
-    walletProvider=window.solflare;
-
-    walletName="Solflare";
-
-    walletAddressValue=
-      window.solflare.publicKey.toString();
-
-    walletConnected();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert("Solflare connection failed.");
-
+  if (!address) {
+    setText("tokenStatus", "Please enter a token mint address.");
+    return;
   }
 
-}
+  if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
+    setText("tokenStatus", "Address format looks invalid. Check the mint address.");
+    return;
+  }
 
+  setText("tokenStatus", "Searching market data...");
+  setText("tokenName", "Loading...");
+  setText("tokenPrice", "—");
+  setText("liquidity", "—");
+  $("chart").innerHTML = "";
 
-/* =========================
-   TRUST WALLET
-========================= */
+  try {
+    const response = await fetch(
+      "https://api.dexscreener.com/latest/dex/tokens/" +
+      encodeURIComponent(address)
+    );
 
-function openTrustWallet(){
+    if (!response.ok) throw new Error("Market service unavailable");
 
-  const url=window.location.href;
-
-  window.location.href=
-    "https://link.trustwallet.com/open_url?coin_id=501&url="+
-    encodeURIComponent(url);
-
-}
-
-
-/* =========================
-   METAMASK
-========================= */
-
-function openMetaMask(){
-
-  const host=
-    window.location.host+
-    window.location.pathname;
-
-  window.location.href=
-    "https://metamask.app.link/dapp/"+host;
-
-}
-
-
-/* =========================
-   CONNECTED UI
-========================= */
-
-async function walletConnected(){
-
-  closeWalletModal();
-
-  const short=
-    walletAddressValue.slice(0,4)+
-    "..."+
-    walletAddressValue.slice(-4);
-
-  document.querySelector(".walletBtn").textContent=
-    "✅ "+short;
-
-  document.getElementById("walletInfo").textContent=
-    walletName;
-
-  document.getElementById("walletAddress").textContent=
-    walletAddressValue;
-
-  document.getElementById("statusText").textContent=
-    walletName+" connected";
-
-  document.getElementById("statusDot").classList.add("on");
-
-  document.getElementById("actionText").textContent=
-    "Wallet connected. Trading actions are ready for preview.";
-
-  await getSolBalance();
-
-}
-
-
-/* =========================
-   SOL BALANCE
-========================= */
-
-async function getSolBalance(){
-
-  if(!walletAddressValue)return;
-
-  try{
-
-    const response=
-      await fetch(
-        "https://api.mainnet-beta.solana.com",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            jsonrpc:"2.0",
-            id:1,
-            method:"getBalance",
-            params:[walletAddressValue]
-          })
-        }
+    const data = await response.json();
+    const pairs = (data.pairs || [])
+      .filter(pair => pair.chainId === "solana")
+      .sort((a, b) =>
+        Number(b.liquidity?.usd || 0) - Number(a.liquidity?.usd || 0)
       );
 
-    const data=await response.json();
-
-    if(data.result){
-
-      const lamports=
-        data.result.value;
-
-      const sol=
-        lamports/1000000000;
-
-      document.getElementById("balanceTop").textContent=
-        "Balance: "+sol.toFixed(4)+" SOL";
-
+    if (!pairs.length) {
+      setText("tokenStatus", "No Solana market found for this address.");
+      setText("tokenName", "Not found");
+      return;
     }
 
-  }catch(error){
+    const pair = pairs[0];
+    currentPrice = Number(pair.priceUsd || 0);
 
-    console.error("Balance error:",error);
+    setText("tokenName", pair.baseToken.symbol || pair.baseToken.name || "Unknown");
+    setText("tokenPrice", currentPrice ? "$" + currentPrice.toPrecision(6) : "—");
+    setText("liquidity", "$" + Number(pair.liquidity?.usd || 0).toLocaleString());
+    setText(
+      "tokenStatus",
+      "Pair: " + (pair.baseToken.symbol || "Token") +
+      " / " + (pair.quoteToken.symbol || "Quote") +
+      ". Data provided by DexScreener."
+    );
 
-  }
-
-}
-
-
-/* =========================
-   DISCONNECT
-========================= */
-
-async function disconnectWallet(){
-
-  try{
-
-    if(walletProvider &&
-       walletProvider.disconnect){
-
-      await walletProvider.disconnect();
-
+    if (pair.url) {
+      const link = document.createElement("a");
+      link.href = pair.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Open market details";
+      link.style.color = "#16d9a0";
+      link.style.display = "inline-block";
+      link.style.marginTop = "10px";
+      $("tokenStatus").appendChild(document.createElement("br"));
+      $("tokenStatus").appendChild(link);
     }
 
-  }catch(e){}
-
-  walletProvider=null;
-  walletAddressValue=null;
-  walletName=null;
-
-  document.querySelector(".walletBtn").textContent=
-    "👛 Connect Wallet";
-
-  document.getElementById("walletInfo").textContent=
-    "Wallet not connected";
-
-  document.getElementById("walletAddress").textContent=
-    "Wallet not connected";
-
-  document.getElementById("balanceTop").textContent=
-    "Balance: 0 SOL";
-
-  document.getElementById("statusText").textContent=
-    "Wallet disconnected";
-
-  document.getElementById("statusDot").classList.remove("on");
-
-  document.getElementById("actionText").textContent=
-    "Connect your wallet to begin.";
-
+    if (window.TradingView && pair.baseToken.symbol) {
+      $("chart").innerHTML =
+        '<div style="padding:15px;color:#91a1bc;">' +
+        'Chart availability depends on TradingView market support. ' +
+        'Use the market details link above if no chart appears.' +
+        '</div>';
+    }
+  } catch (error) {
+    setText("tokenStatus", "Could not retrieve market data. Try again later.");
+    setText("tokenName", "Unavailable");
+  }
 }
 
-
-/* =========================
-   CHAIN
-========================= */
-
-function selectChain(element,name){
-
-  document
-    .querySelectorAll(".chain")
-    .forEach(x=>x.classList.remove("active"));
-
-  element.classList.add("active");
-
-  currentChain=name;
-
-  document.getElementById("networkText").textContent=
-    name;
-
+function showTradingNotice(action) {
+  setText(
+    "tradeStatus",
+    action + " is not connected to a swap execution service yet. " +
+    "No funds have been moved. The next step is integrating a swap API " +
+    "and wallet-approved transaction signing."
+  );
 }
 
+$("connectBtn").addEventListener("click", connectWallet);
+$("refreshBalance").addEventListener("click", refreshBalance);
+$("searchBtn").addEventListener("click", searchToken);
+$("clearBtn").addEventListener("click", () => {
+  $("tokenAddress").value = "";
+  setText("tokenName", "—");
+  setText("tokenPrice", "—");
+  setText("liquidity", "—");
+  setText("tokenStatus", "Enter a token address to begin.");
+  $("chart").innerHTML = "";
+  currentPrice = null;
+});
+$("buyBtn").addEventListener("click", () => showTradingNotice("BUY"));
+$("sellBtn").addEventListener("click", () => showTradingNotice("SELL"));
 
-/* =========================
-   SWAP TOKEN
-========================= */
-
-function swapTokens(){
-
-  const token=
-    document.getElementById("receiveToken");
-
-  token.textContent=
-    token.textContent==="USDC"
-      ?"SOL"
-      :"USDC";
-
-}
-
-
-/* =========================
-   BUY
-========================= */
-
-function quickBuy(amount){
-
-  if(!walletAddressValue){
-
-    alert("Da farko ka haɗa wallet.");
-
-    openWalletModal();
-
+$("historyBtn").addEventListener("click", () => {
+  if (!publicKey) {
+    setText("historyStatus", "Connect your wallet first.");
     return;
-
   }
 
-  document.getElementById("pay").value=
-    amount;
+  const url = "https://solscan.io/account/" + encodeURIComponent(publicKey);
+  setText("historyStatus", "Opening public wallet activity...");
+  window.open(url, "_blank", "noopener,noreferrer");
+});
 
-  document.getElementById("actionText").textContent=
-    "BUY PREVIEW: "+amount+" SOL";
+$("alertBtn").addEventListener("click", () => {
+  const target = Number($("alertPrice").value);
 
-  alert(
-    "BUY PREVIEW\n\n"+
-    amount+
-    " SOL\n\n"+
-    "Ba a aika transaction ba."
+  if (!target || target <= 0 || !currentPrice) {
+    setText("alertStatus", "Search a token and enter a valid target price first.");
+    return;
+  }
+
+  alertTriggered = false;
+  setText(
+    "alertStatus",
+    "Alert set for $" + target + ". Keep the page open and press Search Token to refresh."
   );
 
-}
+  const checkAlert = () => {
+    if (!alertTriggered && currentPrice &&
+        ((target >= currentPrice) || target <= currentPrice)) {
+      if (Math.abs(currentPrice - target) / target < 0.001) {
+        alertTriggered = true;
+        alert("BANGWORK DEX: price is near your target.");
+      }
+    }
+  };
 
+  checkAlert();
+});
 
-function customBuy(){
+$("riskBtn").addEventListener("click", () => {
+  const settings = {
+    takeProfit: $("takeProfit").value,
+    stopLoss: $("stopLoss").value
+  };
 
-  if(!walletAddressValue){
-
-    alert("Da farko ka haɗa wallet.");
-
-    openWalletModal();
-
-    return;
-
-  }
-
-  const amount=
-    prompt("Nawa SOL kake son saya?");
-
-  if(!amount)return;
-
-  if(Number(amount)<=0){
-
-    alert("Amount bai dace ba.");
-
-    return;
-
-  }
-
-  quickBuy(Number(amount));
-
-}
-
-
-/* =========================
-   SELL
-========================= */
-
-function sellPercent(percent){
-
-  if(!walletAddressValue){
-
-    alert("Da farko ka haɗa wallet.");
-
-    openWalletModal();
-
-    return;
-
-  }
-
-  document.getElementById("actionText").textContent=
-    "SELL PREVIEW: "+percent+"%";
-
-  alert(
-    "SELL PREVIEW\n\n"+
-    percent+
-    "% of selected token\n\n"+
-    "Ba a aika transaction ba."
+  localStorage.setItem("bangworkRiskSettings", JSON.stringify(settings));
+  setText(
+    "riskStatus",
+    "Settings saved on this device only. No automatic trade or order was created."
   );
+});
 
+const savedRisk = localStorage.getItem("bangworkRiskSettings");
+if (savedRisk) {
+  try {
+    const settings = JSON.parse(savedRisk);
+    $("takeProfit").value = settings.takeProfit || "";
+    $("stopLoss").value = settings.stopLoss || "";
+  } catch (error) {}
 }
-
-
-function customSell(){
-
-  const percent=
-    prompt("Nawa % kake son sayarwa?");
-
-  if(!percent)return;
-
-  if(Number(percent)<=0 ||
-     Number(percent)>100){
-
-    alert("Shigar da percentage daga 1 zuwa 100.");
-
-    return;
-
-  }
-
-  sellPercent(Number(percent));
-
-}
-
-
-/* =========================
-   TOOLS
-========================= */
-
-function showChart(){
-
-  document.getElementById("actionText").textContent=
-    "📈 Chart module selected.";
-
-}
-
-function showAlerts(){
-
-  document.getElementById("actionText").textContent=
-    "🔔 Alerts module selected.";
-
-}
-
-function showOrders(){
-
-  document.getElementById("actionText").textContent=
-    "⏱️ Orders module selected.";
-
-}
-
-function showMove(){
-
-  document.getElementById("actionText").textContent=
-    "🔄 Move module selected.";
-
-}
-
-function showPro(){
-
-  document.getElementById("actionText").textContent=
-    "🔴 Pro trading mode selected.";
-
-}
-
-function showCurrency(){
-
-  document.getElementById("actionText").textContent=
-    "💱 Currency settings selected.";
-
-}
-
-function showPositions(){
-
-  document.getElementById("actionText").textContent=
-    "📋 Positions selected.";
-
-}
-
-function showHistory(){
-
-  document.getElementById("actionText").textContent=
-    "🧾 Trading history selected.";
-
-}
-
-function showBuy(){
-
-  document.getElementById("actionText").textContent=
-    "💰 Buy panel selected.";
-
-}
-
-function showSell(){
-
-  document.getElementById("actionText").textContent=
-    "↔ Sell panel selected.";
-
-}
-
-function showSettings(){
-
-  document.getElementById("actionText").textContent=
-    "⚙️ Settings selected.";
-
-}
-
 </script>
-
 </body>
-</html>
+        </html>
